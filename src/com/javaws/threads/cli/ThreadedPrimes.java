@@ -1,6 +1,7 @@
 package com.javaws.threads.cli;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -52,15 +53,12 @@ public class ThreadedPrimes implements Primes {
 		long d = number / nbThreads;
 		long r = number % nbThreads;
 		
-		List<Long> primes = calculatePrimes(2, r -1);
+		List<Long> primes =  Collections.synchronizedList(calculatePrimes(2, r -1));
 		
 		for(long i = r; i < number; i+=d) {
 			long current = i;
 			Thread t = new Thread(() -> {
-				List<Long> currentPrimes = calculatePrimes(current, current + d);
-				synchronized (this) {
-					primes.addAll(currentPrimes);
-				}
+				primes.addAll(calculatePrimes(current, current + d));
 			});
 			
 			threads.add(t);
