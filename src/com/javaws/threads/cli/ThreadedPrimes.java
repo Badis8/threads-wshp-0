@@ -57,11 +57,9 @@ public class ThreadedPrimes implements Primes {
 		for(long i = r; i < number; i+=d) {
 			long current = i;
 			Thread t = new Thread(() -> {
-				// Synchronize using this monitor
-				// but this is like sequential
-				// no gain over seq primes calculation
+				List<Long> currentPrimes = calculatePrimes(current, current + d);
 				synchronized (this) {
-					primes.addAll(calculatePrimes(current, current + d));
+					primes.addAll(currentPrimes);
 				}
 			});
 			
