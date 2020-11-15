@@ -5,7 +5,7 @@ public class Program {
 	public static void main(String[] args) {
 		long startTime = System.currentTimeMillis();
 
-		Primes pc = new SeqPrimes();
+		Primes pc = new ThreadedPrimes(20);
 		
 		long number = 9999999;
 		
