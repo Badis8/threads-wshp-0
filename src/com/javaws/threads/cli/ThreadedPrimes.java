@@ -26,7 +26,7 @@ public class ThreadedPrimes implements Primes {
 		return true;
 	}
 	
-	private List<Long> calculatePrimes(long from, long to) {
+	protected List<Long> calculatePrimes(long from, long to) {
 		if(from > to) {
 			return new ArrayList<>();
 		}
@@ -56,12 +56,11 @@ public class ThreadedPrimes implements Primes {
 		
 		for(long i = r; i < number; i+=d) {
 			long current = i;
-			Thread t = new Thread(() -> {
-				primes.addAll(calculatePrimes(current, current + d));
-			});
+			
+			Thread t = new Thread(new PrimeRunnable(primes, current, d, this));
+			t.start();
 			
 			threads.add(t);
-			t.start();
 		}
 		
 		for(Thread t : threads) {
@@ -75,4 +74,26 @@ public class ThreadedPrimes implements Primes {
 		
 		return primes;
 	}
+}
+
+class PrimeRunnable implements Runnable {
+
+	private final List<Long> primes;
+	private final Long current;
+	private final Long d;
+	private final ThreadedPrimes tp;
+
+	public PrimeRunnable(List<Long> primes, Long current, Long d, ThreadedPrimes threadedPrimes) {
+		super();
+		this.primes = primes;
+		this.current = current;
+		this.d = d;
+		this.tp = threadedPrimes;
+	}
+
+	@Override
+	public void run() {
+		primes.addAll(this.tp.calculatePrimes(current, current + d));
+	}
+	
 }
